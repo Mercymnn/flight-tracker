@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flight Tracking</title>
+  <meta charset="UTF-8">
+</head>
+<body>
+
+  <h2>Flight Tracking</h2>
+
+  <div id="result">Loading flight data...</div>
+
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const trackingId = params.get("id");
+
+  if (!trackingId) {
+    document.getElementById("result").innerHTML =
+      "<p style='color:red'>No Tracking ID provided.</p>";
+  } else {
+    async function loadData() {
+      const response = await fetch(`http://127.0.0.1:8000/track/${trackingId}`);
+      const data = await response.json();
+
+      document.getElementById("result").innerHTML = `
+        <p><strong>Tracking ID:</strong> ${data.tracking_id}</p>
+        <p><strong>Flight:</strong> ${data.flight_number}</p>
+        <p><strong>Status:</strong> ${data.status}</p>
+        <p><strong>Departure:</strong> ${data.departure}</p>
+        <p><strong>Arrival:</strong> ${data.arrival}</p>
+      `;
+    }
+
+    loadData();
+    setInterval(loadData, 60000);
+  }
+</script>
+</body>
+</html>
