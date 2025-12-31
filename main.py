@@ -36,15 +36,20 @@ def track_flight(tracking_id: str):
     )
 
     cursor.execute(
-        "SELECT flight_number FROM flights WHERE tracking_id=?",
-        (tracking_id,)
-    )
+    "SELECT flight_number FROM flights WHERE tracking_id=?",
+    (tracking_id,)
+)
 
-    flight_number = cursor.fetchone()[0]
+row = cursor.fetchone()
+
+if not row:
+    return {"error": "Tracking ID not found"}
+
+flight_number = row[0]
 
     # Call Aviationstack API
     response = requests.get(
-        "http://api.aviationstack.com/v1/flights",
+        "https://api.aviationstack.com/v1/flights",
         params={
             "access_key": API_KEY,
             "flight_iata": flight_number
@@ -71,3 +76,4 @@ def track_flight(tracking_id: str):
         "departure": departure,
         "arrival": arrival
     }
+
